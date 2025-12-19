@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DIGIMON デジモン</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #ffffff;
+        }
+
+        .header-bg {
+            background-color: hsl(245, 86%, 8%);
+        }
+
+        .digimon-card {
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .digimon-card:hover {
+            box-shadow:
+                0 0 20px rgba(0, 200, 255, 0.6),
+                0 0 50px rgba(0, 200, 255, 0.4);
+        }
+
+        .digimon-img-bg {
+            border-radius: 50%;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slider-img {
+            max-height: 280px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        #characterSlider,
+        #digimonText {
+            display: none;
+        }
+
+        .btn-black {
+            background-color: black;
+            color: white;
+        }
+
+        .btn-black:hover {
+            background-color: black;
+            color: white;
+        }
+
+        /* ⚡ ELECTRIC GLOWING NAME */
+        #digimonName {
+            font-size: 28px;
+            letter-spacing: 3px;
+            font-weight: bold;
+            color: #d4a359;
+            text-shadow:
+                0 0 6px #c5f600,
+                0 0 15px #c4dd5f,
+                0 0 30px #e2ff61;
+            animation:
+                glowPulse 2.5s infinite alternate,
+                electricFlicker 3s infinite,
+                fadeIn 0.5s ease;
+        }
+
+        @keyframes glowPulse {
+            from {
+                text-shadow:
+                    0 0 5px #00f6ff,
+                    0 0 15px #00cfff,
+                    0 0 25px #008cff;
+            }
+
+            to {
+                text-shadow:
+                    0 0 10px #6a5fe1,
+                    0 0 25px #00cfff,
+                    0 0 50px #178ef0,
+                    0 0 70px #1964e5;
+            }
+        }
+
+        @keyframes electricFlicker {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            3% {
+                opacity: 0.3;
+            }
+
+            6% {
+                opacity: 1;
+            }
+
+            9% {
+                opacity: 0.5;
+            }
+
+            12% {
+                opacity: 1;
+            }
+
+            20% {
+                opacity: 0.8;
+            }
+
+            23% {
+                opacity: 1;
+            }
+
+            70% {
+                opacity: 1;
+            }
+
+            73% {
+                opacity: 0.4;
+            }
+
+            76% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div class="container-fluid header-bg p-3 text-center position-relative">
+        <img src="Digimon_Logo.svg" class="img-fluid" style="height: 53px;">
+        <a href="index.html" class="position-absolute start-0 top-0 m-3">
+            <button class="btn btn-outline-light rounded-5">Home</button>
+        </a>
+    </div>
+
+    <div class="container my-3">
+        <div class="row g-2">
+            <div class="col-10">
+                <input type="text" placeholder="Digimon name" class="form-control rounded-5" id="searchInput">
+            </div>
+            <div class="col-1">
+                <button class="btn btn-black rounded-5 w-100" onclick="searchDigimon()">Search</button>
+            </div>
+            <div class="col-1">
+                <button class="btn btn-black rounded-5 w-100" onclick="showAllDigimon()">All</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container my-3">
+        <div class="row" id="contentArea"></div>
+    </div>
+
+    <div id="characterSlider" class="container my-5 text-center">
+        <h3 id="digimonName" class="mb-3"></h3>
+
+        <div class="d-flex align-items-center justify-content-center gap-4">
+            <button class="btn btn-dark rounded-circle" onclick="prev()">&#8249;</button>
+            <img id="digimonImage" class="img-fluid slider-img" alt="Digimon">
+            <button class="btn btn-dark rounded-circle" onclick="next()">&#8250;</button>
+        </div>
+    </div>
+
+    <p id="digimonText" class="text-center mt-3" style="max-width:600px;margin:auto;"></p>
+
+    <!-- SLIDER SCRIPT -->
+    <script>
+        const slider = document.getElementById("characterSlider");
+        const sliderText = document.getElementById("digimonText");
+        const imageEl = document.getElementById("digimonImage");
+        const textEl = document.getElementById("digimonText");
+        const nameEl = document.getElementById("digimonName");
+
+        function hideSlider() {
+            slider.style.display = "none";
+            sliderText.style.display = "none";
+        }
+
+        function showSlider() {
+            slider.style.display = "block";
+            sliderText.style.display = "block";
+        }
+
+        const sliderData = [
+            { name: "Izzy Izumi", image: "izzy.jpg", text: "Hey, I’m Izzy. I’m really into computers and figuring things out. When something breaks, I don’t panic—I get curious. Data, logic, and problem-solving are kinda my thing." },
+            { name: "Joe Kido", image: "joe.jpg", text: "I’m Joe. I worry a lot, yeah… but that’s because I care. I try to be responsible and make the right choices, especially when everyone’s counting on me." },
+            { name: "Kari Kamiya", image: "kari.jpg", text: "Hi, I’m Kari. I’m not the strongest, but I feel things deeply. I believe being kind matters, even when the world feels dark or scary." },
+            { name: "Matt Ishida", image: "matt.jpg", text: "I’m Matt. I don’t talk much, and I like my space. But if you’re someone I care about, I’ll always have your back—no matter what." },
+            { name: "Mimi Tachikawa", image: "mimi.jpg", text: "Hey! I’m Mimi. I love cute things and expressing myself. I might complain sometimes, but when it comes to my friends, I won’t give up on them." },
+            { name: "Sora Takenouchi", image: "sora.jpg", text: "I’m Sora. I look after people—that’s just who I am. I believe real strength is supporting others and staying by their side." },
+            { name: "T.K. Takaishi", image: "T.K..jpg", text: "I’m T.K. I know I’m young, but I believe in hope. Even when I’m scared, I try to be brave and trust that things will be okay." },
+            { name: "Tai Kamiya", image: "tai-removebg-preview.png", text: "Hey, I’m Tai. I act first and think later sometimes—but I never run away. Protecting my friends means everything to me." }
+        ];
+
+        let currentIndex = 0;
+
+        function renderSlider() {
+            imageEl.src = sliderData[currentIndex].image;
+            textEl.textContent = sliderData[currentIndex].text;
+
+            // Restart electric animation
+            nameEl.style.animation = "none";
+            nameEl.offsetHeight;
+            nameEl.style.animation = "";
+            nameEl.textContent = sliderData[currentIndex].name;
+        }
+
+        function next() {
+            currentIndex = (currentIndex + 1) % sliderData.length;
+            renderSlider();
+        }
+
+        function prev() {
+            currentIndex = (currentIndex - 1 + sliderData.length) % sliderData.length;
+            renderSlider();
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            showSlider();
+            renderSlider();
+        });
+    </script>
+
+    <!-- DIGIMON API SCRIPT -->
+    <script>
+        const colors = {
+            Rookie: '#DEFDE0',
+            Champion: '#DEF3FD',
+            Ultimate: '#FCF7DE',
+            Mega: '#FDDFDF',
+            default: '#F5F5F5'
+        };
+
+        const apiUrl = 'https://digimon-api.vercel.app/api/digimon';
+        let allDigimon = [];
+
+        const contentArea = document.getElementById("contentArea");
+        const searchInput = document.getElementById("searchInput");
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const response = await fetch(apiUrl);
+            allDigimon = await response.json();
+        });
+
+        function searchDigimon() {
+            const query = searchInput.value.toLowerCase();
+            const result = allDigimon.find(d => d.name.toLowerCase().includes(query));
+
+            if (result) {
+                hideSlider();
+                displayDigimon(result);
+            } else {
+                alert('Digimon not found!');
+            }
+        }
+
+        function showAllDigimon() {
+            hideSlider();
+            contentArea.innerHTML = '';
+            allDigimon.forEach(d => {
+                contentArea.innerHTML += createCardHtml(d);
+            });
+        }
+
+        function displayDigimon(digimon) {
+            hideSlider();
+            contentArea.innerHTML = `
+                <div class="d-flex justify-content-center">
+                    ${createCardHtml(digimon, true)}
+                </div>`;
+        }
+
+        function createCardHtml(digimon, detailed = false) {
+            const level = digimon.level || 'default';
+            const bgColor = colors[level] || colors.default;
+
+            return `
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card p-3 rounded-5 my-4 text-center digimon-card"
+                    onclick='displayDigimon(${JSON.stringify(digimon)})'>
+                    <div class="digimon-img-bg" style="background:${bgColor}">
+                        <img class="w-75 rounded-circle" src="${digimon.img}">
+                    </div>
+                    <h4 class="my-3">${digimon.name}</h4>
+                    <div class="border rounded-5 p-2" style="background:${bgColor}">
+                        Level: ${level}
+                    </div>
+                    ${detailed ? `<p class="mt-2"><strong>Attribute:</strong> ${digimon.attribute || 'N/A'}</p>` : ''}
+                </div>
+            </div>`;
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
