@@ -64,7 +64,6 @@
             color: white;
         }
 
-        /* ⚡ ELECTRIC GLOWING NAME */
         #digimonName {
             font-size: 28px;
             letter-spacing: 3px;
@@ -196,7 +195,6 @@
 
     <p id="digimonText" class="text-center mt-3" style="max-width:600px;margin:auto;"></p>
 
-    <!-- SLIDER SCRIPT -->
     <script>
         const slider = document.getElementById("characterSlider");
         const sliderText = document.getElementById("digimonText");
@@ -231,7 +229,6 @@
             imageEl.src = sliderData[currentIndex].image;
             textEl.textContent = sliderData[currentIndex].text;
 
-            // Restart electric animation
             nameEl.style.animation = "none";
             nameEl.offsetHeight;
             nameEl.style.animation = "";
@@ -254,7 +251,6 @@
         });
     </script>
 
-    <!-- DIGIMON API SCRIPT -->
     <script>
         const colors = {
             Rookie: '#DEFDE0',
